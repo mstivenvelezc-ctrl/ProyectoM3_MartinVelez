@@ -487,6 +487,59 @@ body {
         transform: translateY(0);
     }
 
+    /* =====================================================
+            estados de chat
+        ====================================================*/
+
+    .message--typing {
+        font-size: italic;
+        opacity: 0.7;
+        animation: typing-pulse 1.2s ease-in-out infinite;
+    }
+
+    @keyframes typing-pulse {
+        0%,
+        180% {
+            opacity: 0.4;
+        }
+        50% {
+            opacity: 0.9;
+        }
+    }
+
+    .message--error {
+        align-self: center;
+        max-width: 90%;
+        background: #ffffff;
+        color: #b91c1c;
+        border: 2px solid #08cbe5;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    .chatComposer__input:disabled, 
+    .chatComposer__send:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .message__retry {
+        display: block;
+        margin: 0.5rem auto 0;
+        padding: 0.25rem 8.75rem;
+        background: #b91c1c;
+        color: #ffffff;
+        border: 0;
+        border-radius: 0.25rem;
+        font: inherit;
+        font-size: 0.85rem;
+        cursor: pointer;
+    }
+
+    .message__retry:hover {
+        background: #991b1b;
+    }
+
     /* Responsive buttons */
     @media (max-width: 480px) {
         .btn {
