@@ -1,7 +1,7 @@
 
 const state = {
     messages: [
-        { role: "character", text: "Hola, soy tu personaje favorito. ¿que quieres saber?"},
+        { role: "character", text: "Hola, soy Rick. ¿Qué quieres saber? Belch..."},
     ],
     status: "idle", // idle | loading | error
     error: null,
@@ -13,10 +13,10 @@ export function renderChat1() {
 
     <div class="chatApp">
         <header class="chatHeader">
-            <img src="/src/img/perfil.jpg" alt="personaje" class="chat-avatar" />
+            <img src="/src/img/perfil.jpg" alt="Rick" class="chat-avatar" />
             <div class="chatHeader__info">    
             <h1 class="chatHeader__title" ><strong>Chat</strong></h1>
-            <h2 class="chatHeader__subtitle"><strong>María González</strong></h2>
+            <h2 class="chatHeader__subtitle"><strong>Rick Sanchez</strong></h2>
             </div> 
         </header>
         

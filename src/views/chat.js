@@ -1,27 +1,16 @@
+
+import { toCharacterProfile } from "../transform/characters.js";
 import { renderChat1 } from "./chat1.js";
-import { renderChat2 } from "./chat2.js";
-import { renderChat3 } from "./chat3.js";
+
 
 // Datos de personajes
 const characters = [
     {
         id: 1,
-        name: "María González",
+        name: "Rick Sanchez",
         image: "/src/img/perfil.jpg",
         render: renderChat1
     },
-    {
-        id: 2,
-        name: "Carolina Ruiz",
-        image: "/src/img/perfil2.jpg",
-        render: renderChat2
-    },
-    {
-        id: 3,
-        name: "Adriana Trujillo",
-        image: "/src/img/perfil3.jpg",
-        render: renderChat3
-    }
 ];
 
 export function renderChat() {
