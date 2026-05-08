@@ -8,6 +8,10 @@ export function getUserMessage(error) {
         return "El personaje que buscas no existe.";
     }
 
+    if (error?.status === 429) {
+        return "La IA esta saturada. Intenta en unos minutos.";
+    }
+
     if (error?.status >= 500) {
         return "La API esta teniendo problemas. Intentalo en unoss minutos.";
     }

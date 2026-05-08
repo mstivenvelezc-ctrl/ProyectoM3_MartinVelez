@@ -43,7 +43,7 @@ body {
     color: #000000;
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(135deg, #8dddae 0%, #108c3c 100%);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }
 
 /* estilos chat*/
@@ -271,7 +271,7 @@ body {
 
 .chat-card__content {
     flex: 1;
-    color: #ffffff;
+    color: #fbbf24;
     min-width: 0;
 }
 
@@ -525,19 +525,27 @@ body {
 
     .message__retry {
         display: block;
-        margin: 0.5rem auto 0;
-        padding: 0.25rem 8.75rem;
-        background: #b91c1c;
+        margin: 0.75rem auto 0;
+        padding: 0.5rem 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: #ffffff;
         border: 0;
-        border-radius: 0.25rem;
+        border-radius: 0.375rem;
         font: inherit;
+        font-weight: 500;
         font-size: 0.85rem;
         cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
     }
 
     .message__retry:hover {
-        background: #991b1b;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+    }
+
+    .message__retry:active {
+        transform: translateY(0);
     }
 
     /* Responsive buttons */

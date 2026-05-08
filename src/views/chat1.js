@@ -1,10 +1,18 @@
 
+import { getCharacterReply } from "../services/aiClient.js";
+import { debounce, wait } from "../services/debounce.js";
+import { appendUserMessage, appendAssistantMessage } from "../transform/chatPayload.js";
+import { getUserMessage } from "../ui/messages.js";
+
+
 const state = {
     messages: [
         { role: "character", text: "Hola, soy Rick. ¿Qué quieres saber? Belch..."},
     ],
     status: "idle", // idle | loading | error
     error: null,
+    lastUserMessage: null,
+    retryCountdown: null,
 };
 
 export function renderChat1() {
@@ -53,11 +61,22 @@ function renderMessages() {
 }
 
 function renderStatus() {
+    if (state.status === "loading" && state.retryCountdown != null) {
+        return `
+            <div class="message message--character message--typing">
+                Esperando para reintentar (${state.retryCountdown} segundos)...
+            </div>
+        `;
+    }
+
     if (state.status === "loading") {
         return `<div class="message message--character message--typing">escribiendo...</div>`;
     }
+
     if (state.status === "error") {
-        return `<div class="message message--error">${state.error}</div>`;
+        return `<div class="message message--error">${state.error}
+        <button class="message__retry" id="retryBtn" type="button">Reintentar</button>
+        </div>`;
     }
     return "";
 }
@@ -80,6 +99,9 @@ function setupChat1() {
 
     $form.addEventListener("submit", async (event) => {
         event.preventDefault();
+        
+        if (state.status === "loading") return;
+
         const text = $input.value.trim();
         if (!text) return;
 
@@ -96,33 +118,60 @@ function setupChat1() {
     document.querySelector("#chatInput")?.focus();
 }
 
-async function sendMessage(text, isRtry = false) {
-    if (!isRtry) {
-        setState({
-            messages:[...state.messages, { role: "user", text }],
-            status: "loading",
-            error: null,
-            lastUserMessage: text,
-        });
-    } else {
-        setState({ status: "loading", error: null });
-}
+
+async function sendMessage(text, isRetry = false) {
+    const nextMessages = isRetry
+        ? state.messages
+        : [...state.messages, { role: 'user', text}];
+    setState({
+        messages: nextMessages,
+        status: 'loading',
+        error: null,
+        retryCountdown: null,
+        lastUserMessage: isRetry? state.lastUserMessage: text,
+    });
+
 
 try {
-    const reply = await getCharacterReply(text);
+    const reply = await getCharacterReply(nextMessages);
     setState({
-        messages: [...state.messages, {role: "character", text: reply }],
+        messages: [...nextMessages, {role: "character", text: reply }],
         status: "idle",
         error: null,
         lastUserMessage: null,
     });
 } catch (err) {
+    if (err.status === 429) {
+        const seconds = err.retryAfterSeconds ?? 5;
+        for (let s = seconds; s > 0; s--) {
+            setState({ status: "loading", retryCountdown: s });
+            await wait(1000);
+        }
+
+        try {
+            setState({ status: "loading", retryCountdown: null });
+            const reply = await getCharacterReply(nextMessages);
+            setState({
+                messages: [...nextMessages, { role: "character", text: reply }],
+                status: "idle",
+                error: null,
+                lastUserMessage: null,
+            });
+            return;
+            } catch (errRetry) {
+            setState({
+                status: "error",
+                error: getUserMessage(errRetry),
+            });
+            return;
+        }
+    }
+
     setState({
         status: "error",
-        error: "Ups, no te pude responder. Reintentalo.",
+        error: getUserMessage(err),
     });
-}
-
+    }
 }
 
 function scrollToBottom() {
@@ -130,15 +179,4 @@ function scrollToBottom() {
     if ($messages) {
         $messages.scrollTop = $messages.scrollHeight;
     }
-}
-
-// respuesta simulada
-function getCharacterReply(userText) {
-    return new Promise((resolve, reject) => {
-        const delay = 800 + Math.random() * 1200;
-
-        setTimeout(() => {
-            resolve(`Recibido: "${userText}", (Esta respuesta hoy es simulada,)`);
-        }, delay);
-    });
 }

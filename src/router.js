@@ -7,7 +7,7 @@ import { renderNotFound } from "./views/notFound.js";
 
 
 const routes = {
-    "/src": renderHome,
+    "/": renderHome,
     "/chat": renderChat,
     "/rick-chat": renderChat1,
     "/about": renderAbout,
