@@ -1,10 +1,11 @@
-
-
 import { router } from "./router.js";
 import { setupLinkInterception } from "./navigation.js";
 
+// Interceptar clics en links para navegación SPA
 setupLinkInterception();
 
-window.addEventListener("popstate", router );
+// Manejar el botón atrás del navegador
+window.addEventListener("popstate", router);
 
+// Renderizar la vista inicial
 router();

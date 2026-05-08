@@ -1,5 +1,5 @@
 
-import { renderChat1 } from "../views/chat1.js";
+import { renderChat1 } from "../views/chat.js";
 
 
 

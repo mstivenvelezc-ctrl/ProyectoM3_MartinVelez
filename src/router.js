@@ -1,28 +1,46 @@
-
 import { renderHome, disableHome } from "./views/home.js";
-import { renderChat } from "./views/chat.js";
-import { renderChat1 } from "./views/chat1.js";
+import { renderCharacterChat, disableChat } from "./views/characterChat.js";
+import { renderCharacterList } from "./views/characterList.js";
 import { renderAbout } from "./views/about.js";
 import { renderNotFound } from "./views/notFound.js";
-
-
-const routes = {
-    "/": renderHome,
-    "/chat": renderChat,
-    "/rick-chat": renderChat1,
-    "/about": renderAbout,
-};
-
+import { getCharacterById } from "./data/charactersData.js";
 
 export function router() {
     const path = window.location.pathname;
     
-    // Desactivar home si no estamos en esa ruta
-    if (path !== "/src") {
-        disableHome();
+    // Desactivar vistas previas
+    disableHome();
+    disableChat();
+
+    // Rutas estáticas
+    if (path === "/") {
+        renderHome();
+        return;
     }
     
-    const render = routes[path] || renderNotFound;
-    render();
-}
+    if (path === "/about") {
+        renderAbout();
+        return;
+    }
 
+    // Ruta para la lista de personajes
+    if (path === "/chat") {
+        renderCharacterList();
+        return;
+    }
+
+    // Rutas dinámicas para chats individuales: /chat/:characterId
+    const chatMatch = path.match(/^\/chat\/([a-z-]+)$/);
+    if (chatMatch) {
+        const characterId = chatMatch[1];
+        const character = getCharacterById(characterId);
+        
+        if (character) {
+            renderCharacterChat(character);
+            return;
+        }
+    }
+
+    // Si no coincide ninguna ruta
+    renderNotFound();
+}

@@ -5,8 +5,8 @@
     display: flex;
     gap: 1rem;
     padding: 0.75rem;
-    background: #0c2b19;
-    border-bottom: 1px solid #0c2b19;
+    background: #470394;
+    border-bottom: 1px solid #470394;
 }
 
 .mainNav__link {
@@ -19,7 +19,7 @@
 }
 
 .mainNav__link:hover {
-    background: #363636;
+    background: #0e99ae;
 }
 
 /* reset minimo */
@@ -40,7 +40,7 @@ body {
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 1rem;
     line-height: 1.5;
-    color: #000000;
+    color: #ffffff;
     margin: 0;
     min-height: 100vh;
     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
@@ -52,8 +52,12 @@ body {
     display: flex;/* contenedor principal del chat */
     flex-direction: column;
     height: 80vh;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    overflow: hidden;
     background-image: 
-    linear-gradient(135deg, #08cbe5 0%, #038ed8 100%),
+    linear-gradient(135deg, #04f639 0%, #80fe03 100%),
     url("/src/img/fondo.jpg"); /* reemplaza con la ruta de tu imagen */
     background-size: cover; /* que la imagen cubra toda la pantalla */
     background-position: center;
@@ -71,8 +75,8 @@ body {
 
 .chatHeader {
     padding: 1rem;
-    border-bottom: 1px solid #055f2b;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: 1px solid #3f186e;
+    background: linear-gradient(135deg, #667eea 0%, #4d0e8b 100%);
     display: flex;          
     align-items: center;   
     gap: 1rem;         
@@ -124,7 +128,7 @@ body {
 
 .message--user {
     align-self: flex-end;
-    background-color: #0c2b19;
+    background-color: #470394;
     color: #ffffff;
 }
 
@@ -150,8 +154,8 @@ body {
     font-family: inherit;
     font-size: 1rem;
     font-weight: 400;
-    color: #ffffff;
-    background-color: #58ca24;
+    color: #e8ef0b;
+    background-color: #6e06ec;
     border: 0.1;
     border-radius: 2rem;
     cursor: pointer;
@@ -233,7 +237,7 @@ body {
     text-align: center;
     font-size: 2rem;
     margin-bottom: 2rem;
-    color: #1f2937;
+    color: #ffffff;
     font-weight: 700;
 }
 
@@ -453,7 +457,7 @@ body {
 
     .view p {
         margin-bottom: 1rem;
-        color: #252424;
+        color: #ffffff;
     }
 
     .btn {
@@ -472,8 +476,8 @@ body {
     }
 
     .btn--primary {
-        color: #eedcdc;
-        background: #111827 !important;
+        color: #ffffff;
+        background: #470394 !important;
         border: 0;
     }
 
@@ -622,7 +626,7 @@ body {
 .characterCard__meta {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #e0e7ff;
+    color: #ffffff !important;
     margin-bottom: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -631,7 +635,7 @@ body {
 .characterCard__detail {
     font-size: 0.9rem;
     line-height: 1.6;
-    color: #f3f4f6;
+    color: #ffffff !important;
     margin-bottom: 1.5rem;
 }
 
