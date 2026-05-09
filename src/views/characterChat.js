@@ -3,17 +3,29 @@ import { debounce, wait } from "../services/debounce.js";
 import { appendUserMessage, appendAssistantMessage } from "../transform/chatPayload.js";
 import { getUserMessage } from "../ui/messages.js";
 
-// Estado genérico para el chat que se activa/desactiva según el personaje
-let chatState = {
-    character: null,
-    messages: [],
-    status: "idle", // idle | loading | error
-    error: null,
-    lastUserMessage: null,
-    retryCountdown: null,
-};
+// Almacenamiento de estados independientes por personaje
+const characterStates = {};
 
+// Estado actual en uso
+let chatState = null;
+let currentCharacterId = null;
 let isChatActive = false;
+
+// Función para obtener o crear el estado de un personaje
+function getChatState(characterId) {
+    if (!characterStates[characterId]) {
+        characterStates[characterId] = {
+            character: null,
+            messages: [],
+            status: "idle",
+            error: null,
+            lastUserMessage: null,
+            retryCountdown: null,
+            isRetrying: false,
+        };
+    }
+    return characterStates[characterId];
+}
 
 export function disableChat() {
     isChatActive = false;
@@ -21,6 +33,10 @@ export function disableChat() {
 
 export function renderCharacterChat(character) {
     isChatActive = true;
+    currentCharacterId = character.id;
+    
+    // Obtener o crear el estado para este personaje
+    chatState = getChatState(character.id);
     chatState.character = character;
     
     // Inicializar mensajes con el saludo del personaje si es la primera vez
@@ -87,7 +103,7 @@ function renderStatus() {
 
     if (chatState.status === "error") {
         return `<div class="message message--error">${chatState.error}
-            <button class="message__retry" id="retryBtn" type="button">Reintentar</button>
+            <button onclick class="message__retry" id="retryBtn" type="button">Reintentar</button>
         </div>`;
     }
     return "";
@@ -100,7 +116,7 @@ function escapeHtml(str) {
 }
 
 function setState(updates) {
-    if (!isChatActive) return;
+    if (!isChatActive || !chatState) return;
     Object.assign(chatState, updates);
     renderCharacterChat(chatState.character);
 }
@@ -117,68 +133,93 @@ function setupChat() {
     const $input = document.querySelector("#chatInput");
     const $retry = document.querySelector("#retryBtn");
 
+    // Evento para enviar nuevo mensaje
     $form.addEventListener("submit", async (event) => {
         event.preventDefault();
+        
+        // Solo procesar si no está en reintentos
+        if (chatState.isRetrying) {
+            return;
+        }
+
         const userMessage = $input.value.trim();
 
         if (!userMessage) {
             return;
         }
 
-        // Agregar mensaje del usuario
+        // Agregar mensaje del usuario solo si es nuevo (no es reintentar)
         setState({
             messages: [...chatState.messages, { role: "user", text: userMessage }],
             lastUserMessage: userMessage,
+            status: "loading",
+            error: null,
         });
 
         $input.value = "";
 
         // Solicitar respuesta de la IA
-        setState({ status: "loading", error: null });
-
-        try {
-            const reply = await getCharacterReply(
-                chatState.messages,
-                chatState.character.systemPrompt
-            );
-
-            const updatedMessages = appendAssistantMessage(chatState.messages, reply);
-            setState({
-                messages: updatedMessages,
-                status: "idle",
-            });
-        } catch (error) {
-            setState({
-                status: "error",
-                error: getUserMessage(error),
-            });
-
-            // Reintentar automático después de 5 segundos
-            for (let i = 5; i > 0; i--) {
-                await wait(1000);
-                if (!isChatActive) return;
-                setState({ retryCountdown: i - 1 });
-            }
-
-            if (isChatActive) {
-                const $retryBtn = document.querySelector("#retryBtn");
-                if ($retryBtn) {
-                    $retryBtn.click();
-                }
-            }
-        }
+        await handleChatRequest();
     });
 
+    // Evento para reintentar (no agrega nuevo mensaje, solo reintenta la IA)
     if ($retry) {
-        $retry.addEventListener("click", () => {
-            // Reintentar la última solicitud
-            const userMessage = chatState.lastUserMessage;
-            if (userMessage) {
-                setState({ status: "loading", error: null });
-                // La lógica de reintento se ejecuta como un nuevo envío
-                $input.value = userMessage;
-                $form.dispatchEvent(new Event("submit"));
+        $retry.addEventListener("click", async (event) => {
+            event.preventDefault();
+            
+            // Evitar múltiples clics
+            if (chatState.isRetrying || chatState.status === "loading") {
+                return;
             }
+
+            // Marcar como en reintentos
+            setState({
+                status: "loading",
+                error: null,
+                isRetrying: true,
+            });
+
+            // Llamar a handleChatRequest sin agregar el mensaje de nuevo
+            await handleChatRequest();
         });
+    }
+}
+
+async function handleChatRequest() {
+    try {
+        const reply = await getCharacterReply(
+            chatState.messages,
+            chatState.character.systemPrompt
+        );
+
+        const updatedMessages = appendAssistantMessage(chatState.messages, reply);
+        setState({
+            messages: updatedMessages,
+            status: "idle",
+            isRetrying: false,
+        });
+    } catch (error) {
+        setState({
+            status: "error",
+            error: getUserMessage(error),
+            isRetrying: false,
+        });
+
+        // Reintentar automático después de 5 segundos
+        for (let i = 5; i > 0; i--) {
+            await wait(1000);
+            if (!isChatActive) return;
+            setState({ retryCountdown: i - 1 });
+        }
+
+        // Reintento automático sin hacer click
+        if (isChatActive && chatState.status === "error") {
+            setState({
+                status: "loading",
+                error: null,
+                isRetrying: true,
+            });
+            await handleChatRequest();
+        }
     }
 }

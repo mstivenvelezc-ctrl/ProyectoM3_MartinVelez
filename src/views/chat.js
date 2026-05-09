@@ -16,39 +16,6 @@ const state = {
 };
 
 export function renderChat1() {
-    const app = document.querySelector("#app");
-    app.innerHTML = `
-
-    <div class="chatApp">
-        <header class="chatHeader">
-            <img src="" alt="Rick" class="chat-avatar" />
-            <div class="chatHeader__info">    
-            <h1 class="chatHeader__title" ><strong>Chat</strong></h1>
-            <h2 class="chatHeader__subtitle"><strong>Rick Sanchez</strong></h2>
-            </div> 
-        </header>
-        
-        <main class="chatMessages" id="chatMessages" aria-label="mensajes">
-            ${renderMessages()}
-            ${renderStatus()}
-        </main>
-        
-        <form class="chatComposer" id="chatComposer">
-            <input 
-            class="chatComposer__input"
-            id="chatInput"
-            type="text"
-            placeholder="Escribir mensaje..."
-            aria-label="escribe tu mensaje"
-            ${state.status === "loading" ? "disabled" : ""}
-            />
-        <button class="chatComposer__send" type="submit" ${state.status === "loading" ? "disabled" : "" }>
-            <strong>>>></strong>
-        </button>
-        </form>
-    </div>
-    `;
-
     // luego de cada render: engancha listeners y bajar el scroll.
     setupChat1();
     scrollToBottom();
