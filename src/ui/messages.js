@@ -13,7 +13,7 @@ export function getUserMessage(error) {
     }
 
     if (error?.status >= 500) {
-        return "La API esta teniendo problemas. Intentalo en unoss minutos.";
+        return "La API esta teniendo problemas. Intentalo en unos minutos.";
     }
 
     if (error?.name === "TypeError" && error.message.includes("fetch")) {
