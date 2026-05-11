@@ -18,7 +18,7 @@ export async function getCharacterReply(uiMessages, systemPrompt) {
     try {
         rawResponse = await fetchJson(CHAT_ENDPOINT,{
             method: "POST",
-            headers: { "Content-type": "application/json" },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         });
     } catch (err) {

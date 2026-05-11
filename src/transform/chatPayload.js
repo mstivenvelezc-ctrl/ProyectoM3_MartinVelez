@@ -1,7 +1,7 @@
 
 const MODEL_NAME = "gemini-3.1-flash-lite";
 const MAX_OUTPUT_TOKENS = 200;
-const TEMPERATURE = 1;
+const TEMPERATURE = 0.9;
 const MAX_TURNS_HISTORY = 12;
 
 export function toApiMessages(uiMessages) {
@@ -31,11 +31,21 @@ export function normalizeAIResponse(raw) {
     const parts = raw?.candidates?.[0]?.content?.parts;
     if (!Array.isArray(parts)) return "";
 
-    return parts 
+    const text = parts 
     .filter((p) => p && typeof p.text === "string")
     .map((p) => p.text)
     .join("")
     .trim();
+
+    // Limitar a 3 líneas máximo
+    const lines = text.split('\n');
+    const maxLines = 3;
+    
+    if (lines.length > maxLines) {
+        return lines.slice(0, maxLines).join('\n').trim();
+    }
+    
+    return text;
 }
 
 
