@@ -796,6 +796,51 @@ body {
     transform: none;
 }
 
+.characterForm__wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.characterForm__suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: #ffffff;
+    border: 2px solid #667eea;
+    border-top: none;
+    border-radius: 0 0 0.5rem 0.5rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.characterForm__suggestion {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #1f2937;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.characterForm__suggestion:last-child {
+    border-bottom: none;
+}
+
+.characterForm__suggestion:hover {
+    background: #f3f4f6;
+    padding-left: 1.25rem;
+}
+
+.characterForm__suggestion:active {
+    background: #e5e7eb;
+}
+
 .homeStatus {
     padding: 1rem;
     border-radius: 0.75rem;

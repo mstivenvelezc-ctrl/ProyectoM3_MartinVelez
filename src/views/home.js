@@ -28,13 +28,16 @@ export function renderHome() {
         <p>Una experiencia conversacional con IA, con tus personajes favoritos de Rick and Morty.</p>
 
         <form class="characterForm" id="characterForm">
-            <input class="characterForm__input"
-            id="characterInput"
-            type="text"
-            value="${state.currentName}"
-            placeholder="Nombre del personaje"
-            aria-label="Nombre del personaje"
-            ${state.status === "loading" ? "disabled" : ""}/>
+            <div class="characterForm__wrapper">
+                <input class="characterForm__input"
+                id="characterInput"
+                type="text"
+                value="${state.currentName}"
+                placeholder="Nombre del personaje"
+                aria-label="Nombre del personaje"
+                ${state.status === "loading" ? "disabled" : ""}/>
+                <ul class="characterForm__suggestions" id="characterSuggestions" style="display: none;"></ul>
+            </div>
             <button class="characterForm__button" type="submit"
                 ${state.status === "loading" ? "disabled" : ""}>
             Cambiar personaje </button>
@@ -90,6 +93,38 @@ function setState(updates) {
 function setupHome() {
     const $form = document.querySelector("#characterForm");
     const $input = document.querySelector("#characterInput");
+    const $suggestions = document.querySelector("#characterSuggestions");
+
+    // Sugerencias de personajes a mostrar
+    const suggestionsList = ["Rick", "Morty", "Summer"];
+
+    // Mostrar sugerencias al hacer click en el input
+    $input.addEventListener("click", () => {
+        $suggestions.innerHTML = suggestionsList.map(character => `
+            <li class="characterForm__suggestion" data-character="${character}">
+                ${character}
+            </li>
+        `).join("");
+        $suggestions.style.display = "block";
+
+        // Agregar listeners a cada sugerencia
+        $suggestions.querySelectorAll(".characterForm__suggestion").forEach(item => {
+            item.addEventListener("click", (e) => {
+                const characterName = e.target.getAttribute("data-character");
+                $input.value = characterName;
+                $suggestions.style.display = "none";
+                setState({ currentName: characterName });
+                loadCharacterByName(characterName);
+            });
+        });
+    });
+
+    // Ocultar sugerencias al hacer click fuera
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest("#characterForm")) {
+            $suggestions.style.display = "none";
+        }
+    });
 
     $form.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -105,6 +140,7 @@ function setupHome() {
 
         setState({ currentName: name });
         loadCharacterByName(name);
+        $suggestions.style.display = "none";
     });
 }
 

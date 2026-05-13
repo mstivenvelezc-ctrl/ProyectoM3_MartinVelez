@@ -50,6 +50,7 @@ it("deberia adjuntar retryAfterSeconds al error cuando la API responde 429", asy
             retryAfterSeconds: 30,
         }),
     });
+    
     const uiMessages = [{ role: "user", text: "spam" }];
 
     await expect(getCharacterReply(uiMessages)).rejects.toMatchObject({
