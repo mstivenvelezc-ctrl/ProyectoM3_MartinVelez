@@ -31,6 +31,7 @@ export function renderHome() {
             <input class="characterForm__input"
             id="characterInput"
             type="text"
+            autocomplete="off" 
             value="${state.currentName}"
             placeholder="Nombre del personaje"
             aria-label="Nombre del personaje"
